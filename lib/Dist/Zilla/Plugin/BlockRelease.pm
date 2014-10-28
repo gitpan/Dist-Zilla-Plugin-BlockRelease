@@ -1,23 +1,34 @@
 use strict;
 use warnings;
 package Dist::Zilla::Plugin::BlockRelease;
-BEGIN {
-  $Dist::Zilla::Plugin::BlockRelease::AUTHORITY = 'cpan:ETHER';
-}
-# git description: 4dc0061
-$Dist::Zilla::Plugin::BlockRelease::VERSION = '0.001';
+# git description: v0.001-8-gc4f0ca1
+$Dist::Zilla::Plugin::BlockRelease::VERSION = '0.002';
 # ABSTRACT: Prevent a release from occurring
+# KEYWORDS: plugin distribution release sanity safety prevent
 # vim: set ts=8 sw=4 tw=78 et :
 
 use Moose;
-with 'Dist::Zilla::Role::BeforeRelease';
+with 'Dist::Zilla::Role::BeforeRelease',
+    'Dist::Zilla::Role::Releaser';
+
 use namespace::autoclean;
+
+sub BUILD
+{
+    my $self = shift;
+    $self->log('releases will be prevented!');
+}
+
+# nothing to put in dump_config yet...
+# around dump_config => sub { ... };
 
 sub before_release
 {
     my $self = shift;
     $self->log_fatal('halting release');
 }
+
+sub release {}
 
 __PACKAGE__->meta->make_immutable;
 
@@ -33,7 +44,7 @@ Dist::Zilla::Plugin::BlockRelease - Prevent a release from occurring
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 SYNOPSIS
 
@@ -50,7 +61,7 @@ development-only requirements or code, to guard against an accidental release.
 Load it last to allow all other C<BeforeRelease> plugins to still perform
 their checks, or first to stop these pre-release checks from occurring.
 
-=for Pod::Coverage before_release
+=for Pod::Coverage BUILD before_release release
 
 =head1 SUPPORT
 
